@@ -1,9 +1,14 @@
 package com.anthonytlei.spring_data_jpa_demo;
 
+import java.util.List;
+
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import com.github.javafaker.Faker;
 
@@ -18,7 +23,19 @@ public class SpringDataJpaDemoApplication {
 	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
 		return args -> {
 			generateRandomStudents(studentRepository);
+			getStudentsSorted(studentRepository);
+			getStudentsPaginated(studentRepository);
 		};
+	}
+
+	private Page<Student> getStudentsPaginated(StudentRepository studentRepository) {
+		PageRequest pageRequest = PageRequest.of(0, 5, Sort.by("firstName").ascending());
+		return studentRepository.findAll(pageRequest);
+	}
+
+	private List<Student> getStudentsSorted(StudentRepository studentRepository) {
+		Sort sort = Sort.by(Sort.Direction.ASC, "firstName");
+		return studentRepository.findAll(sort);
 	}
 
 	private void generateRandomStudents(StudentRepository studentRepository) {
@@ -31,7 +48,5 @@ public class SpringDataJpaDemoApplication {
 			Student student = new Student(firstName, lastName, email, age);
 			studentRepository.save(student);
 		}
-		studentRepository.findAll().forEach(System.out::println);
 	}
-
 }
