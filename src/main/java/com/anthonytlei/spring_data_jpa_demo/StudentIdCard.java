@@ -3,6 +3,7 @@ package com.anthonytlei.spring_data_jpa_demo;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,7 +25,7 @@ public class StudentIdCard {
     private String cardNumber;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "student_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "student_id_fk"))
     private Student student;
 
     public StudentIdCard() {
