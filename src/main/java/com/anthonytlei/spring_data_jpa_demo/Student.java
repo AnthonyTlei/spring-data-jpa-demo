@@ -1,10 +1,15 @@
 package com.anthonytlei.spring_data_jpa_demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
@@ -25,8 +30,10 @@ public class Student {
     private String email;
     @Column(name = "age", nullable = false)
     private Integer age;
-    @OneToOne (mappedBy = "student", orphanRemoval = true)
+    @OneToOne(mappedBy = "student", orphanRemoval = true)
     private StudentIdCard studentIdCard;
+    @OneToMany(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    private List<Book> books = new ArrayList<Book>();
 
     public Student() {
     }
@@ -76,6 +83,20 @@ public class Student {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public void addBook(Book book) {
+        if (!this.books.contains(book)) {
+            this.books.add(book);
+            book.setStudent(this);
+        }
+    }
+
+    public void removeBook(Book book) {
+        if(this.books.contains(book)) {
+            this.books.remove(book);
+            book.setStudent(null);
+        }
     }
 
     @Override
