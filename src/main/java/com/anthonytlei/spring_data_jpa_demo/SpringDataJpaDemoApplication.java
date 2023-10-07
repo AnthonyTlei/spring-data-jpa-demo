@@ -33,11 +33,22 @@ public class SpringDataJpaDemoApplication {
 
 			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
 
+			student.setStudentIdCard(studentIdCard);
+
 			student.addBook(new Book("Book 1", LocalDateTime.now().minusDays(4L)));
 			student.addBook(new Book("Book 2", LocalDateTime.now().minusDays(10L)));
 			student.addBook(new Book("Book 3", LocalDateTime.now().minusDays(15L)));
 
-			studentIdCardRepository.save(studentIdCard);
+			studentRepository.save(student);
+
+			studentRepository.findById(1L).ifPresent(System.out::println);
+
+			studentRepository.findById(1L).ifPresent(s -> {
+				System.out.println("fetch books lazy");
+				student.getBooks().forEach(book -> {
+					System.out.println(book);
+				});
+			});
 		};
 	}
 

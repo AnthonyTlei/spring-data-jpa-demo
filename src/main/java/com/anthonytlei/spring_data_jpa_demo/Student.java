@@ -31,7 +31,7 @@ public class Student {
     private String email;
     @Column(name = "age", nullable = false)
     private Integer age;
-    @OneToOne(mappedBy = "student", orphanRemoval = true)
+    @OneToOne(mappedBy = "student", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private StudentIdCard studentIdCard;
     @OneToMany(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<Book>();
@@ -84,6 +84,14 @@ public class Student {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public void setStudentIdCard(StudentIdCard card) {
+        this.studentIdCard = card;
+    }
+
+    public List<Book> getBooks() {
+        return books;
     }
 
     public void addBook(Book book) {
