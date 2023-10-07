@@ -3,12 +3,14 @@ package com.anthonytlei.spring_data_jpa_demo;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -24,8 +26,8 @@ public class Course {
     private String name;
     @Column(name = "department", nullable = false, columnDefinition = "TEXT")
     private String department;
-    @ManyToMany(mappedBy = "courses")
-    private List<Student> students = new ArrayList<Student>();
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "course")
+    private List<Enrolment> enrolments = new ArrayList<Enrolment>();
     
     public Course() {
     }
@@ -59,8 +61,17 @@ public class Course {
         this.department = department;
     }
 
-    public List<Student> getStudents() {
-        return this.students;
+    public List<Enrolment> getEnrolments() {
+        return enrolments;
+    }
+
+    public void addEnrolment(Enrolment enrolment) {
+        if (enrolments.contains(enrolment)) return;
+        this.enrolments.add(enrolment);
+    }
+
+    public void removeEnrolment(Enrolment enrolment) {
+        this.enrolments.remove(enrolment);
     }
 
     @Override

@@ -7,13 +7,9 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
@@ -40,13 +36,8 @@ public class Student {
     @OneToMany(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST,
             CascadeType.REMOVE }, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<Book>();
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
-    @JoinTable(
-        name = "enrolment", 
-        joinColumns = @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "enrolment_student_id_fk")), 
-        inverseJoinColumns = @JoinColumn(name = "course_id", foreignKey = @ForeignKey(name = "enrolment_course_id_fk"))
-    )
-    private List<Course> courses = new ArrayList<Course>();
+    @OneToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY, mappedBy = "student")
+    private List<Enrolment> enrolments = new ArrayList<Enrolment>();
 
     public Student() {
     }
@@ -124,18 +115,17 @@ public class Student {
         }
     }
 
-    public List<Course> getCourses() {
-        return courses;
+    public List<Enrolment> getEnrolments() {
+        return enrolments;
     }
 
-    public void addCourse(Course course) {
-        courses.add(course);
-        course.getStudents().add(this);
+    public void addEnrolment(Enrolment enrolment) {
+        if (enrolments.contains(enrolment)) return;
+        this.enrolments.add(enrolment);
     }
 
-    public void removeCourse(Course course) {
-        courses.remove(course);
-        course.getStudents().remove(this);
+    public void removeEnrolment(Enrolment enrolment) {
+        this.enrolments.remove(enrolment);
     }
 
     @Override

@@ -29,8 +29,8 @@ public class SpringDataJpaDemoApplication {
 			String lastName = faker.name().lastName();
 			String email = String.format("%s.%s@user.com", firstName, lastName);
 			int age = faker.number().numberBetween(17, 55);
-			Student student = new Student(firstName, lastName, email, age);
 
+			Student student = new Student(firstName, lastName, email, age);
 			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
 
 			student.setStudentIdCard(studentIdCard);
@@ -39,9 +39,9 @@ public class SpringDataJpaDemoApplication {
 			student.addBook(new Book("Book 2", LocalDateTime.now().minusDays(10L)));
 			student.addBook(new Book("Book 3", LocalDateTime.now().minusDays(15L)));
 
-			student.addCourse(new Course("Course 1", "D1"));
-			student.addCourse(new Course("Course 2", "D1"));
-			student.addCourse(new Course("Course 3", "D3"));
+			student.addEnrolment(new Enrolment(new EnrolmentId(1L, 1L), student, new Course("Course 1", "D1"),LocalDateTime.now()));
+			student.addEnrolment(new Enrolment(new EnrolmentId(1L, 2L) ,student, new Course("Course 2", "D1"),LocalDateTime.now()));
+			student.addEnrolment(new Enrolment(new EnrolmentId(1L, 3L) ,student, new Course("Course 3", "D2"),LocalDateTime.now()));
 
 			studentRepository.save(student);
 
@@ -53,8 +53,8 @@ public class SpringDataJpaDemoApplication {
 				student.getBooks().forEach(book -> {
 					System.out.println(book);
 				});
-				student.getCourses().forEach(course -> {
-					System.out.println(course);
+				student.getEnrolments().forEach(enrolment -> {
+					System.out.println(enrolment);
 				});
 			});
 		};
