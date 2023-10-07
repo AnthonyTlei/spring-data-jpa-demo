@@ -1,5 +1,6 @@
 package com.anthonytlei.spring_data_jpa_demo;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
@@ -20,11 +21,23 @@ public class SpringDataJpaDemoApplication {
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+	CommandLineRunner commandLineRunner(StudentRepository studentRepository,
+			StudentIdCardRepository studentIdCardRepository) {
 		return args -> {
-			generateRandomStudents(studentRepository);
-			getStudentsSorted(studentRepository);
-			getStudentsPaginated(studentRepository);
+			Faker faker = new Faker();
+			String firstName = faker.name().firstName();
+			String lastName = faker.name().lastName();
+			String email = String.format("%s.%s@user.com", firstName, lastName);
+			int age = faker.number().numberBetween(17, 55);
+			Student student = new Student(firstName, lastName, email, age);
+
+			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
+
+			student.addBook(new Book("Book 1", LocalDateTime.now().minusDays(4L)));
+			student.addBook(new Book("Book 2", LocalDateTime.now().minusDays(10L)));
+			student.addBook(new Book("Book 3", LocalDateTime.now().minusDays(15L)));
+
+			studentIdCardRepository.save(studentIdCard);
 		};
 	}
 
@@ -40,11 +53,11 @@ public class SpringDataJpaDemoApplication {
 
 	private void generateRandomStudents(StudentRepository studentRepository) {
 		Faker faker = new Faker();
-		for (int i=0; i < 20; ++i) {
+		for (int i = 0; i < 20; ++i) {
 			String firstName = faker.name().firstName();
 			String lastName = faker.name().lastName();
 			String email = String.format("%s.%s@user.com", firstName, lastName);
-			int age = faker.number().numberBetween(17,55);
+			int age = faker.number().numberBetween(17, 55);
 			Student student = new Student(firstName, lastName, email, age);
 			studentRepository.save(student);
 		}
