@@ -7,9 +7,13 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.SequenceGenerator;
@@ -31,10 +35,18 @@ public class Student {
     private String email;
     @Column(name = "age", nullable = false)
     private Integer age;
-    @OneToOne(mappedBy = "student", orphanRemoval = true, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToOne(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
     private StudentIdCard studentIdCard;
-    @OneToMany(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "student", orphanRemoval = true, cascade = { CascadeType.PERSIST,
+            CascadeType.REMOVE }, fetch = FetchType.LAZY)
     private List<Book> books = new ArrayList<Book>();
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.REMOVE }, fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "enrolment", 
+        joinColumns = @JoinColumn(name = "student_id", foreignKey = @ForeignKey(name = "enrolment_student_id_fk")), 
+        inverseJoinColumns = @JoinColumn(name = "course_id", foreignKey = @ForeignKey(name = "enrolment_course_id_fk"))
+    )
+    private List<Course> courses = new ArrayList<Course>();
 
     public Student() {
     }
@@ -86,6 +98,10 @@ public class Student {
         this.age = age;
     }
 
+    public StudentIdCard getStudentIdCard() {
+        return this.studentIdCard;
+    }
+
     public void setStudentIdCard(StudentIdCard card) {
         this.studentIdCard = card;
     }
@@ -102,10 +118,24 @@ public class Student {
     }
 
     public void removeBook(Book book) {
-        if(this.books.contains(book)) {
+        if (this.books.contains(book)) {
             this.books.remove(book);
             book.setStudent(null);
         }
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void addCourse(Course course) {
+        courses.add(course);
+        course.getStudents().add(this);
+    }
+
+    public void removeCourse(Course course) {
+        courses.remove(course);
+        course.getStudents().remove(this);
     }
 
     @Override

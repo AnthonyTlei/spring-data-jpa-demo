@@ -39,14 +39,22 @@ public class SpringDataJpaDemoApplication {
 			student.addBook(new Book("Book 2", LocalDateTime.now().minusDays(10L)));
 			student.addBook(new Book("Book 3", LocalDateTime.now().minusDays(15L)));
 
+			student.addCourse(new Course("Course 1", "D1"));
+			student.addCourse(new Course("Course 2", "D1"));
+			student.addCourse(new Course("Course 3", "D3"));
+
 			studentRepository.save(student);
 
 			studentRepository.findById(1L).ifPresent(System.out::println);
 
 			studentRepository.findById(1L).ifPresent(s -> {
-				System.out.println("fetch books lazy");
+				System.out.println("Fetching student data...");
+				System.out.println(student.getStudentIdCard());
 				student.getBooks().forEach(book -> {
 					System.out.println(book);
+				});
+				student.getCourses().forEach(course -> {
+					System.out.println(course);
 				});
 			});
 		};

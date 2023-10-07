@@ -1,10 +1,14 @@
 package com.anthonytlei.spring_data_jpa_demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 
@@ -20,6 +24,8 @@ public class Course {
     private String name;
     @Column(name = "department", nullable = false, columnDefinition = "TEXT")
     private String department;
+    @ManyToMany(mappedBy = "courses")
+    private List<Student> students = new ArrayList<Student>();
     
     public Course() {
     }
@@ -51,6 +57,10 @@ public class Course {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public List<Student> getStudents() {
+        return this.students;
     }
 
     @Override
